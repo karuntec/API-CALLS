@@ -26,13 +26,34 @@ const initializeDBAndServer = async () => {
 
 initializeDBAndServer();
 
-app.get("/books/", async (request, response) => {
-  const getBooksQuery = `SELECT
-    *
+app.get("/players/", async (request, response) => {
+  const getPlayersQuery = `
+    SELECT
+      *
     FROM
-    book
+      cricket_team
     ORDER BY
-    book_id;`;
-  const booksArray = await db.all(getBooksQuery);
-  response.send(booksArray);
+      player_id;`;
+  const playersArray = await db.all(getPlayersQuery);
+  response.send(playersArray);
+});
+module.exports = app;
+
+app.post("/players/", async (request, response) => {
+  const playerDetails = request.body;
+  const { player_id, player_name, jersey_number, role } = playerDetails;
+  const addPlayerQuery = `
+    INSERT INTO
+      book (player_id,player_name,jersey_number,role)
+    VALUES
+      (
+        '${player_id}',
+         ${player_name},
+         ${jersey_number},
+         ${role}
+      );`;
+
+  const dbResponse = await db.run(addPlayerQuery);
+
+  response.send("Player added to team");
 });
